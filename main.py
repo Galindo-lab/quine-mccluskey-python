@@ -5,9 +5,23 @@ from utils.count_set_bits import count_set_bits
 
 print("Ready...")
 
+# bindigits( (8+9) ^ (0+1) , 8 )
+# bindigits( ~((4&6&12&14) + (~4&~6&~12&~14)) ,10)
+
 # Variables ------------------------------------------------------------
 
-m = [0,1,3,7,8,9,11,15]         # valores de interés
+# Pruebas
+
+# solucion: C'D' + BD' + AD' + AB'C' + ABC + A'B'CD
+# http://www.32x8.com/sop4_____A-B-C-D_____m_0-3-4-6-8-9-10-12-14-15___________option-1_____989780975078827292690y
+m = [0,2,3,4,6,8,9,10,12,14,15]
+
+# funcion 1
+# m = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+
+# funcion 0
+# m = []                         
+
 n = 4                           # numero de variables
 
 
@@ -32,15 +46,19 @@ for a in range(len(m)):
             if implicante_primo:
                 # no puede ser agrupado con otros terminos por lo tanto
                 # NO puede ser simplificado
-                implicantes.append( (m[a]) )
-            continue 
+                implicantes.append( [m[a]] )
+            break 
         
         if count_set_bits(m[a]^m[b]) == 1: # numero de bits diferentes
-            grupos.append( (m[a],m[b]) )
+            grupos.append( [m[a],m[b]] )
             # Esto significa que el termino no sirve para la tabla de
             # implicantes primos porque todavia puede ser simplificado
             implicante_primo = False 
-            
 
+# NOTE: los implicantes obtenidos son 'parciales', 
+
+            
 print("grupos: ",grupos)
-print("implicantes",implicantes)
+print("implicantes: ",implicantes)
+
+
