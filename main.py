@@ -44,13 +44,15 @@ print("Ready...")
 
 
 # m = [0,1,3,7,8,9,11,15]
-m = [1,3,4,5,9,11,12,13,14,15]
+# m = [1,3,4,5,9,11,12,13,14,15]
 n = 4                           # numero de variables
 
 
+m = [3,12,17,24,7,11,19,44,27,45,46,58,31,47]
+
 # Procedimiento --------------------------------------------------------
-m.sort(key=count_set_bits)      # ordenar por numero de 1
-m = [[a] for a in m]
+# m.sort(key=count_set_bits)      # ordenar por numero de 1
+# m = [[a] for a in m]
 
 # la maxima simplificacion 
 # fuente: https://es.wikipedia.org/wiki/Mapa_de_Karnaugh
@@ -63,14 +65,14 @@ implicantes = []       # implicantes que ya no pueden ser reducidos
 def find_primes(m):
     # m = [ [i] for i in m ]
     primes = []
-    for a in range(len(m)):
+    for a in m:
         implicante_primo = True
-        for b in range(len(m)):
-            if adyasent_terms( m[a],m[b] ) and same_implicant(m[a],m[b]) :
+        for b in m:
+            if adyasent_terms( a,b ) and same_implicant(a,b) :
                 implicante_primo = False
                 break
         if implicante_primo:
-            primes.append(m[a])
+            primes.append(a)
     return primes
 
 
@@ -98,5 +100,7 @@ def x(m):
         m = convine_elements(m)
         if len(m) == 0:
             break;
+    for i in primes:
+        print(i)
     return primes
 
