@@ -4,11 +4,7 @@ from utils.bindigits import bindigits
 from utils.count_set_bits import count_set_bits
 from utils.implicants import implicants
 
-def adyasent_terms(a,b):
-    # revisar si dos terminos son adyasentes en el mapa de Karnaugh.
-    # osea que tienen el mismo valor implicante
-    # ejmplo: [0,1] y [8,9] sus implicante son 000- y 100-
-    #         por lo tanto son adyasentes.
+def same_implicant(a,b):
     return implicants(a) == implicants(b)
 
 def active_implicant_bits(a):
@@ -17,10 +13,8 @@ def active_implicant_bits(a):
     #          la funcion retornara 0.
     return count_set_bits( (implicants(a) & a[0]) )
 
-# def is_minterm(list_minterm,minterm):
-#     for min in list_minterm:
-#         if implicants(mint) == 
-    
+def adyasent_terms(a,b):
+    return count_set_bits( (implicants(a) & a[0]) ^ (implicants(b) & b[0])  ) == 1
 
 
 print("Ready...")
@@ -32,11 +26,11 @@ print("Ready...")
 
 # Pruebas
 
-# m = [0,1,8,3,9,7,11,15]         
+ # m = [0,1,8,3,9,7,11,15]         
 
 # solucion: C'D' + BD' + AD' + AB'C' + ABC + A'B'CD
 # http://www.32x8.com/sop4_____A-B-C-D_____m_0-3-4-6-8-9-10-12-14-15___________option-1_____989780975078827292690y
-m = [0,3,4,6,8,9,10,12,14,15]
+# m = [0,3,4,6,8,9,10,12,14,15]
 # m = [0,1,3,7,8,9,11,15]
 
 # funcion 1
@@ -45,12 +39,18 @@ m = [0,3,4,6,8,9,10,12,14,15]
 # funcion 0
 # m = []                         
 
+# m = [0,7,13]
+
+
+
+# m = [0,1,3,7,8,9,11,15]
+m = [1,3,4,5,9,11,12,13,14,15]
 n = 4                           # numero de variables
 
 
 # Procedimiento --------------------------------------------------------
 m.sort(key=count_set_bits)      # ordenar por numero de 1
-
+m = [[a] for a in m]
 
 # la maxima simplificacion 
 # fuente: https://es.wikipedia.org/wiki/Mapa_de_Karnaugh
@@ -59,64 +59,44 @@ reducciones_maximas = int(sqrt(2**n))
 grupos = []            # grupos que continuan a la siguiente iteracion
 implicantes = []       # implicantes que ya no pueden ser reducidos
 
-for a in range(len(m)):
-    implicante_primo = True
-    for b in range(a,len(m)):   # evitamos evaluar 2 veces los elementos
 
-        # no vale la pena seguir iterando cuando en numero de bits difetente
-        # es mayor a 1.
-        if count_set_bits(m[b]) > count_set_bits(m[a])+1:
-            if implicante_primo:
-                # no puede ser agrupado con otros terminos por lo tanto
-                # NO puede ser simplificado
-                implicantes.append( [m[a]] )
-            break 
-        
-        if count_set_bits(m[a]^m[b]) == 1: # numero de bits diferentes
-            grupos.append( [m[a],m[b]] )
-            # Esto significa que el termino no sirve para la tabla de
-            # implicantes primos porque todavia puede ser simplificado
-            implicante_primo = False 
-
-# NOTE: los implicantes obtenidos son 'parciales',
+def find_primes(m):
+    # m = [ [i] for i in m ]
+    primes = []
+    for a in range(len(m)):
+        implicante_primo = True
+        for b in range(len(m)):
+            if adyasent_terms( m[a],m[b] ) and same_implicant(m[a],m[b]) :
+                implicante_primo = False
+                break
+        if implicante_primo:
+            primes.append(m[a])
+    return primes
 
 
+def convine_elements(m):
+    terms = []
+    for a in m:
+        for b in m:
+            if active_implicant_bits(a)+1 == active_implicant_bits(b):            
+                if same_implicant(a,b) and adyasent_terms(a,b) :
+                    terms.append(a+b)
+    return terms
+    
 
+def remove_primes(lista,elements):
+    for i in elements:
+        lista.remove(i)
 
-
-
-
-
-
-
-
-
-print("grupos: ",grupos)
-print("implicantes: ",implicantes)
-
-for a in grupos:
-    implicante_primo = True
-    for b in grupos:
-        if active_implicant_bits(a)+1 == active_implicant_bits(b):                
-            if adyasent_terms(a,b):
-                print(a+b)
-
-# for i in grupos:
-#     for a in implicantes:
-#         print(i,a)
-
-
-# grupos2 = []  
-
-# for a in range(len(grupos)):
-#     implicante_primo = True
-#     for b in range(a,len(grupos)):
-#         if implicants(grupos[b]) == implicants(grupos[a]):
-#             if count_set_bits(implicants(grupos[a]) & grupos[a][0])+1 == count_set_bits(implicants(grupos[b]) & grupos[b][0]):
-#                 if grupos[b] != grupos[a]:
-#                     implicantes.append(grupos[a] + grupos[b])
-#                     print(grupos[a] + grupos[b])
-#             if count_set_bits( (implicants(grupos[a]) & grupos[a][0]) ^ (implicants(grupos[b]) & grupos[b][0]) ) == 1:
-#                 grupos2.append(grupos[a] + grupos[b])
-
+def x(m):
+    m.sort(key=count_set_bits)      # ordenar por numero de 1
+    m = [[a] for a in m]
+    primes = []
+    while(True):
+        primes += find_primes(m)
+        remove_primes(m,find_primes(m))
+        m = convine_elements(m)
+        if len(m) == 0:
+            break;
+    return primes
 
