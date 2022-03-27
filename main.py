@@ -1,106 +1,92 @@
 
-from math import *
-from utils.bindigits import bindigits
-from utils.count_set_bits import count_set_bits
-from utils.implicants import implicants
+IMPLICANTS = 0
+BIN = 1
 
-def same_implicant(a,b):
-    return implicants(a) == implicants(b)
+def count_set_bits(n):
+    count = 0
+    while (n):
+        count += n & 1
+        n >>= 1
+    return count
 
-def active_implicant_bits(a):
-    # numero de bits activos en el mplicante
-    # ejemplo: [1,0,8,9] su implicante es -00- por lo tanto
-    #          la funcion retornara 0.
-    return count_set_bits( (implicants(a) & a[0]) )
+def bindigits(number,digits):
+    # numero binario, de bit fijos
+    return "{0:0{1}b}".format(number,digits)
 
-def adyasent_terms(a,b):
-    return count_set_bits( (implicants(a) & a[0]) ^ (implicants(b) & b[0])  ) == 1
+def implicants_table(m,d,n):
+    f = m + d
+    f.sort(key=count_set_bits)
+    table = [ [[e],bindigits(e,n)] for e in f ]
+    return table
 
+def join_bin(a,b):
+    output = []
+    for i in range(len(a)):
+        output.append( '-' if a[i] != b[i] else a[i] )
+    return "".join(output)
 
-print("Ready...")
+def join_row(a,b):
+    foo = a[IMPLICANTS]+b[IMPLICANTS]
+    foo.sort()
+    return [ foo , join_bin(a[BIN],b[BIN]) ]
 
-# bindigits( (8+9) ^ (0+1) , 8 )
-# bindigits( ~((4&6&12&14) + (~4&~6&~12&~14)) ,10)
+def count_ones(a):
+    return a.count("1")
 
-# Variables ------------------------------------------------------------
-
-# Pruebas
-
- # m = [0,1,8,3,9,7,11,15]         
-
-# solucion: C'D' + BD' + AD' + AB'C' + ABC + A'B'CD
-# http://www.32x8.com/sop4_____A-B-C-D_____m_0-3-4-6-8-9-10-12-14-15___________option-1_____989780975078827292690y
-# m = [0,3,4,6,8,9,10,12,14,15]
-# m = [0,1,3,7,8,9,11,15]
-
-# funcion 1
-# m = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-
-# funcion 0
-# m = []                         
-
-# m = [0,7,13]
-
-
-
-# m = [0,1,3,7,8,9,11,15]
-# m = [1,3,4,5,9,11,12,13,14,15]
-n = 4                           # numero de variables
-
-
-m = [3,12,17,24,7,11,19,44,27,45,46,58,31,47]
-
-# Procedimiento --------------------------------------------------------
-# m.sort(key=count_set_bits)      # ordenar por numero de 1
-# m = [[a] for a in m]
-
-# la maxima simplificacion 
-# fuente: https://es.wikipedia.org/wiki/Mapa_de_Karnaugh
-reducciones_maximas = int(sqrt(2**n))
-
-grupos = []            # grupos que continuan a la siguiente iteracion
-implicantes = []       # implicantes que ya no pueden ser reducidos
-
+def bit_diff(a,b):              # numero de bits diferentes
+    diff = 0
+    for i in range(len(a)):
+        if a[i] != b[i]:
+            diff += 1
+    return diff
 
 def find_primes(m):
-    # m = [ [i] for i in m ]
-    primes = []
+    table = []
     for a in m:
-        implicante_primo = True
+        is_prime = True
         for b in m:
-            if adyasent_terms( a,b ) and same_implicant(a,b) :
-                implicante_primo = False
+            if bit_diff(a[BIN],b[BIN]) == 1:
+                is_prime = False
                 break
-        if implicante_primo:
-            primes.append(a)
-    return primes
+        if is_prime:
+            table.append(a)
+    return table
 
+def remove_columns(table, primes):
+    for i in primes:
+        table.remove(i)
 
-def convine_elements(m):
-    terms = []
+def simp(m):
+    table = []
     for a in m:
         for b in m:
-            if active_implicant_bits(a)+1 == active_implicant_bits(b):            
-                if same_implicant(a,b) and adyasent_terms(a,b) :
-                    terms.append(a+b)
-    return terms
-    
+            if a != b and bit_diff(a[BIN],b[BIN]) == 1:
+                c = join_row(a,b)
+                if c not in table:
+                    table.append(c)                
+    return table
 
-def remove_primes(lista,elements):
-    for i in elements:
-        lista.remove(i)
+# numero de variables
+n = 5
 
-def x(m):
-    m.sort(key=count_set_bits)      # ordenar por numero de 1
-    m = [[a] for a in m]
-    primes = []
+# valores de activacion
+m = [0,2,3,5,7,8,10,11,13,15,22,29,30]
+
+# valores indiferentes
+d = []
+
+
+# -----------------
+print(" Running... ")
+
+def tabulate(m,d,n):
+    tabla = implicants_table(m,d,n)
+    mint = []
     while(True):
-        primes += find_primes(m)
-        remove_primes(m,find_primes(m))
-        m = convine_elements(m)
-        if len(m) == 0:
-            break;
-    for i in primes:
-        print(i)
-    return primes
-
+        p = find_primes(tabla)
+        mint += p
+        remove_columns(tabla,p)
+        tabla = simp(tabla)
+        if len(tabla) == 0:
+            break
+    return mint
