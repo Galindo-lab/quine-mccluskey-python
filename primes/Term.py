@@ -5,6 +5,10 @@ class Term():
         self.binary = binary
         self.n_ones = Term.count_ones(binary)
 
+    def __str__(self):
+        return (str(self.binary) + " " + str(self.n_ones) + " " +
+                str(self.implicants))
+
     @classmethod
     def from_int(cls: type, number: int, n_variables: int) -> type:
         """ Crear un termino a partir de un valor en vez de una Lista, se usa para genera la primera tabla """
@@ -13,8 +17,9 @@ class Term():
     @classmethod
     def combine(cls: type, a: type, b: type) -> type:
         """ Une dos instancias del tipo 'Term' y retorna su union """
-        return cls(a.implicants + b.implicants,
-                   Term.combine_bin(a.binary, b.binary))
+        foo = a.implicants + b.implicants
+        foo.sort()
+        return cls(foo, Term.combine_bin(a.binary, b.binary))
 
     @classmethod
     def diference(cls: type, a: type, b: type):
@@ -22,13 +27,13 @@ class Term():
         return Term.diference_str(a.binary, b.binary)
 
     @classmethod
-    def diference_str(cls: type, a: str, b:str):
+    def diference_str(cls: type, a: str, b: str):
         """ Numero de diferencias entre dos strings """
         diff = 0
         for i in range(len(a)):
             if a[i] != b[i]: diff += 1
         return diff
-    
+
     @classmethod
     def bindigits(cls: type, number: int, digits: int) -> str:
         """ Convertir numero a binario de tamaño fijo """
