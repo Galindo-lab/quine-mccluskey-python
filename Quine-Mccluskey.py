@@ -22,7 +22,7 @@ def implicants_table(m: list, d: list, n: int) -> list:
         Numero de variables
 
     Returns
-    -------
+    ------- ss
     list
         Tabla de valores con su represetacion binaria
     """
