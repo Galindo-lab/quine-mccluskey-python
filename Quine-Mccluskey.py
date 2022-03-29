@@ -4,6 +4,8 @@ from src.combine_implicants import combine_implicants
 from src.count_ones import count_ones
 from src.difference import difference
 
+from src.tabla_implicantes import prime_implicants
+
 # Functions --------------------------------------------------
 
 IMPLICANTS = 0
@@ -92,16 +94,7 @@ def tabulate(m):
 
 
 
-def find_implicants():
-    # numero de variables
-    n = 4
-    
-    # valores de activacion
-    m = [4, 8, 10, 11, 12, 15, ]
-    
-    # valores indiferentes
-    d = [9, 14]
-
+def find_implicants(n,m,d):
     table = implicants_table(m, d, n)
     primes = []
     
@@ -112,3 +105,17 @@ def find_implicants():
         tabulate(table)
 
     return primes
+
+
+# numero de variables
+n = 4
+    
+# valores de activacion
+m = [0,3,4,6,8,9,10,12,14,15]
+    
+# valores indiferentes
+d = []
+
+primes = find_implicants(n,m,d)
+
+prime_implicants(m,primes)
