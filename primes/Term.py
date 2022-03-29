@@ -17,6 +17,19 @@ class Term():
                    Term.combine_bin(a.binary, b.binary))
 
     @classmethod
+    def diference(cls: type, a: type, b: type):
+        """ numero de diferencias entre dos Term.binary """
+        return Term.diference_str(a.binary, b.binary)
+
+    @classmethod
+    def diference_str(cls: type, a: str, b:str):
+        """ Numero de diferencias entre dos strings """
+        diff = 0
+        for i in range(len(a)):
+            if a[i] != b[i]: diff += 1
+        return diff
+    
+    @classmethod
     def bindigits(cls: type, number: int, digits: int) -> str:
         """ Convertir numero a binario de tamaño fijo """
         return "{0:0{1}b}".format(number, digits)
