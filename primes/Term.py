@@ -11,7 +11,7 @@ class Term():
         return cls([number], Term.bindigits(number, n_variables))
 
     @classmethod
-    def join(cls: type, a: type, b: type) -> type:
+    def combine(cls: type, a: type, b: type) -> type:
         """ Une dos instancias del tipo 'Term' y retorna su union """
         return cls(a.implicants + b.implicants,
                    Term.combine_bin(a.binary, b.binary))
