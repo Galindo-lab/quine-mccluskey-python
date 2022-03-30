@@ -27,7 +27,7 @@ class Term():
         return Term.diference_str(a.binary, b.binary)
 
     @classmethod
-    def diference_str(cls: type, a: str, b: str):
+    def diference_str(cls: type, a: str, b: str) -> int:
         """ Numero de diferencias entre dos strings """
         diff = 0
         for i in range(len(a)):
