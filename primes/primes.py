@@ -1,23 +1,18 @@
 from Term import Term
 
 
-def print_table(m: list) -> None:
-    for i in m:
-        print(i)
-
-
-def create_table(n, m, d):
+def create_table(n: int, m: list, d: list):
+    """ Crea las primesras tablas de minterminos """
     tbl = []
-    # funcion mas redundacia
-    terminos = m + d
+    terminos = m + d  # funcion mas redundancia
     for value in terminos:
         tbl.append(Term.from_int(value, n))
     tbl.sort(key=(lambda x: x.n_ones))
     return tbl
 
 
-def is_prime(value, table):
-
+def is_prime(value: type, table: list) -> bool:
+    """ Saber si un valor es primo """
     for element in set(table):
         if Term.diference(value, element) == 1: return False
 
@@ -25,7 +20,7 @@ def is_prime(value, table):
 
 
 def extract_prime_terms(m: list) -> list:
-    """ este es un metodo destructivo """
+    """ Este es un método destructivo, extrae todos los valores primos de la función """
     alredy = set()
     primes = []
     for a in set(m):
@@ -39,10 +34,12 @@ def extract_prime_terms(m: list) -> list:
 
 
 def combinable(a, b):
+    """ Revisar que dos valores tengan solo un solo valor de diferencia """
     return a.n_ones > b.n_ones and Term.diference(a, b) == 1
 
 
 def tabulate(m: list) -> list:
+    """ Este es un metodo destructivo, Iterar los valores para formar las combinaciones entre los grupos """
     alredy = set()
     primes = []
     for a in set(m):
@@ -52,17 +49,20 @@ def tabulate(m: list) -> list:
                 if c.binary not in alredy:
                     primes.append(c)
                     alredy.add(c.binary)
-    return primes
+    m.clear()
+    for i in primes:
+        m.append(i)
 
 
 def prime_implicants(n_variables, funcion, redundancia):
+    """ Extraer los implicantes primos de la función """
     primes = []
 
     d = create_table(n_variables, funcion, redundancia)
     primes += extract_prime_terms(d)
 
     while (len(d) != 0):
-        d = tabulate(d)
+        tabulate(d)
         primes += extract_prime_terms(d)
-    return primes
 
+    return primes
