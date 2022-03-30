@@ -72,8 +72,9 @@ def prime_implicants(n_variables, funcion, redundancia):
     d = create_table(n_variables, funcion, redundacia)
     primes += extract_prime_terms(d)
 
-    start_time = timeit.default_timer()
     while (len(d) != 0):
         d = tabulate(d)
         primes += extract_prime_terms(d)
     return primes
+
+print_table(prime_implicants(n_variables, funcion, redundacia))
