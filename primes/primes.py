@@ -66,10 +66,7 @@ def tabulate(m: list) -> list:
     return primes
 
 
-def prime_implicants(n_variables, funcion, redundacia):
-    n_variables = 4
-    funcion = [4,8,10,11,12,15]
-    redundacia = [9,14]
+def prime_implicants(n_variables, funcion, redundancia):
     primes = []
 
     d = create_table(n_variables, funcion, redundacia)
