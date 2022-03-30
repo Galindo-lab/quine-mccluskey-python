@@ -1,15 +1,4 @@
 from Term import Term
-# solucion particular: shorturl.at/uBX19
-
-# variables de la funcion
-# TODO: Convertirlo en una lista para que el usuario pueda nombrar sus variables.
-n_variables = 4
-
-# normalmente llamada 'm', valores de interes
-funcion = [1, 4, 8, 10, 11, 12, 15]
-
-# valores que son indiferetes, normalemnte llamados 'd'
-redundacia = [14]
 
 
 def print_table(m: list) -> None:
@@ -69,7 +58,7 @@ def tabulate(m: list) -> list:
 def prime_implicants(n_variables, funcion, redundancia):
     primes = []
 
-    d = create_table(n_variables, funcion, redundacia)
+    d = create_table(n_variables, funcion, redundancia)
     primes += extract_prime_terms(d)
 
     while (len(d) != 0):
@@ -77,4 +66,3 @@ def prime_implicants(n_variables, funcion, redundancia):
         primes += extract_prime_terms(d)
     return primes
 
-print_table(prime_implicants(n_variables, funcion, redundacia))
