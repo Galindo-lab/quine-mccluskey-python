@@ -1,4 +1,4 @@
-from Term import Term
+from primes.Term import Term
 
 
 def create_table(n: int, m: list, d: list):
@@ -53,11 +53,21 @@ def tabulate(m: list) -> list:
     for i in primes:
         m.append(i)
 
+        
+def true_function(m,n):
+    """ Revisar si todos los elementos estan contenidos en la funcion """
+    return len(m) == (1<<n)
+
+
+def false_function(m):
+    """ Reviar si la lista de la funcion esta vacia """
+    return len(m) == 0
+
 
 def prime_implicants(n_variables, funcion, redundancia):
     """ Extraer los implicantes primos de la función """
+        
     primes = []
-
     d = create_table(n_variables, funcion, redundancia)
     primes += extract_prime_terms(d)
 
