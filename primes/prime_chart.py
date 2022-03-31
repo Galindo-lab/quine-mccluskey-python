@@ -1,65 +1,44 @@
 
 from primes.find_primes import prime_implicants
 
+
+
 def solve_chart(n_variables, funcion, redundancia):
     primes = prime_implicants(n_variables, funcion, redundancia)
     essential_terms = []
 
 
+    primes.sort(key=(lambda x: len(x.implicants)))
+
     i = 0
-    while(i < len(funcion)):
+    while( i < len(funcion) ):
         frecuencia = 0
+        last = 0
         for a in primes:
-            if funcion[i] in a.implicants :
-                essential = a
+            if funcion[i] in a.implicants:
                 frecuencia += 1
-            elif frecuencia > 1:
-                continue
+                last = a
 
+        # print(funcion[i], frecuencia)
+                
         if frecuencia == 1:
-            essential_terms.append(essential)
-            primes.remove(essential)
-            for a in essential.implicants:
-                if a in funcion:
-                    funcion.remove(a)
+            # print(last)
+            primes.remove(last)
+            essential_terms.append(last)
+            for i in last.implicants:
+                if i in funcion:
+                    funcion.remove(i)
+            i = 0
         else:
-            i += 1
+            i+=1
 
-    
-    print(funcion)
+    print("")
     print("Esenciales: ")
     for i in essential_terms:
-        print(i)
-    print("No esenciales: ")
+        print(i.binary, i.implicants)
+
+    print("")
+    print("No Esenciales:",funcion)
     for i in primes:
-        print(i)
-
-
-    i = 0
-    while(i < len(funcion)):
-        frecuencia = 0
-        
-        
-    
-    # for i in funcion:
-    #     frecuencia = 0
-    #     for a in primes:
-    #         if frecuencia == 0 and i in a.implicants :
-    #             essential = a
-    #             frecuencia += 1
-    #         elif frecuencia > 1:
-    #             continue
-
-    #     if frecuencia == 1:
-    #         essential_terms.append(essential)
-    #         primes.remove(essential)
-
-    print(funcion)
-    print("Esenciales: ")
-    for i in essential_terms:
-        print(i)
-    print("No esenciales: ")
-    for i in primes:
-        print(i)
-
-        
+        print(i.binary, i.implicants)
+    print("")
