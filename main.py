@@ -10,7 +10,8 @@ def print_table(m: list) -> None:
         print(i.binary, '|', i.implicants)
             
 def x():
-    n,m,d = Input.from_table()
+    # n,m,d = Input.from_table()
+    n,m,d = Input.from_list()
 
     # n = 4
     # m = [4,8,10,11,12,15]
