@@ -1,4 +1,4 @@
-from primes.Utils import Utils
+from src.Utils import Utils
 
 
 class Input():

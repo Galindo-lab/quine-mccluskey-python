@@ -1,8 +1,8 @@
 
-from primes.find_primes import prime_implicants
-from primes.prime_chart import solve_chart
+from src.find_primes import prime_implicants
+from src.prime_chart import solve_chart
 
-from primes.Input import Input
+from src.Input import Input
 
 def print_table(m: list) -> None:
     """ Implime los valores de una tabla  """

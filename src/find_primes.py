@@ -1,4 +1,4 @@
-from primes.Term import Term
+from src.Term import Term
 
 
 def create_table(n: int, m: list, d: list):

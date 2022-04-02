@@ -1,5 +1,5 @@
 
-from primes.find_primes import prime_implicants
+from src.find_primes import prime_implicants
 
 
 
