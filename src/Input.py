@@ -34,7 +34,6 @@ class Input():
 
             if foo == '-': d.append(i)
             if foo == '1': m.append(i)
-        print("")
 
         return n, m, d
 
