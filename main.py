@@ -31,6 +31,11 @@ def x():
 
     n, m, d = Input.select()
 
+    print("\n------ RESULTS ------\n")
+    print("LOGS:")
+    m = Input.validate(n,m)
+    d = Input.validate(n,d)
+
     solve_chart(n, m, d)
 
 

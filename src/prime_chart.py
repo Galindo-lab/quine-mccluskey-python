@@ -29,13 +29,12 @@ def solve_chart(n_variables, funcion, redundancia):
         else:
             i += 1
 
-    print("")
-    print("Esenciales: ")
+    print("ESENCIALES:")
     for i in essential_terms:
         print(i.binary, i.implicants)
 
     print("")
-    print("No Esenciales:", funcion)
+    print("NO ESENCIALES:", funcion)
     for i in primes:
         print(i.binary, i.implicants)
     print("")
