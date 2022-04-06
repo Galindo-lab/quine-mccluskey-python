@@ -35,8 +35,8 @@ def x():
     print("LOGS:")
     m = Input.validate(n,m)
     d = Input.validate(n,d)
+    print("")
 
     solve_chart(n, m, d)
 
-
-#x()
+x()
