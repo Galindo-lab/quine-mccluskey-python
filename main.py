@@ -19,19 +19,6 @@ def print_title() -> None:
     ]))
 
 
-def select_input_type() -> tuple:
-    """ Seleccionar como ingresar los datos al programa """
-    while (1):
-        print("0.LISTA / 1.TABLA?")
-        e = input()
-        if e == '0':
-            return Input.from_list()
-        elif e == '1':
-            return Input.from_table()
-        else:
-            print("TIPO INVALIDO")
-
-
 def print_table(m: list) -> None:
     """ Implime los valores de una tabla """
     for i in m:
@@ -42,7 +29,7 @@ def x():
     clear_screen()
     print_title()
 
-    n, m, d = select_input_type()
+    n, m, d = Input.select()
 
     solve_chart(n, m, d)
 

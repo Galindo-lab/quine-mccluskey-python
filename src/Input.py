@@ -68,3 +68,16 @@ class Input():
         d = Input.validate(n, d)
 
         return n, m, d
+
+    @classmethod
+    def select(cls: type) -> tuple:
+        """ Seleccionar como ingresar los datos al programa """
+        while (1):
+            print("0.LISTA / 1.TABLA?")
+            e = Input.char()
+            if e == '0':
+                return Input.from_list()
+            elif e == '1':
+                return Input.from_table()
+            else:
+                print("TIPO INVALIDO")
