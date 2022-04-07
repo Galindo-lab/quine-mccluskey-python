@@ -28,7 +28,14 @@ class Input():
     def char(cls: type, message="") -> str:
         """ Capturar caracter """
         print(message)
-        return input()[0]
+        while(True):
+            foo = input()
+            if len(foo) > 0:
+                break
+            else:
+                print("DATO INVALIDO")
+            
+        return foo[0]
 
     @classmethod
     def list(cls: type, message="", separator=",") -> list:
