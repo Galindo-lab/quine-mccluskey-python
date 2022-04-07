@@ -16,10 +16,11 @@ class Input():
         return input()[0]
 
     @classmethod
-    def list(cls: type, message="", separator=",", Type=str) -> list:
-        """ Captura una lista """
+    def list(cls: type, message="", separator=",") -> list:
+        """ Captura una lista de enteros """
         print(message)
-        return list(map(Type, input().split(separator)))
+        foo = input().split(separator)
+        return [ int(e) for e in foo if e.isnumeric() ]
 
     @classmethod
     def validate(cls: type, n_variables: int, function: list) -> list:
@@ -59,8 +60,8 @@ class Input():
     def from_list(cls: type):
         """ Capturar los datos en forma de lista, los elementos deben estar separados por ',' """
         n = Input.integer("NUMERO VARIABLES?")
-        m = Input.list("ACTIVACION?",Type=int)
-        d = Input.list("REDUNDANCIA?",Type=int)
+        m = Input.list("ACTIVACION?")
+        d = Input.list("REDUNDANCIA?")
 
         return n, m, d
 
