@@ -2,20 +2,27 @@ from src.Utils import Utils
 
 
 class Input():
+
+    @classmethod
+    def isnumeric(cls: type, value: str) -> bool:
+        """ micropython no tiene el metodo 'isnumeric' """
+        try:
+            int(value)
+            return True
+        except ValueError:
+            return False
+        
     
     @classmethod
     def integer(cls: type, message="") -> int:
         """ Capturar entero """
         print(message)
         while(True):
-            # micropython no tiene el metodo "isnumeric"
-            try:
-                foo = int(input())
-                break
-            except ValueError:
+            foo = input()
+            if Input.isnumeric(foo):
+                return int(foo)
+            else:
                 print("DATO INVALIDO")
-        
-        return foo
 
     @classmethod
     def char(cls: type, message="") -> str:
@@ -28,7 +35,7 @@ class Input():
         """ Captura una lista de enteros """
         print(message)
         foo = input().split(separator)
-        return [ int(e) for e in foo if e.isnumeric() ]
+        return [ int(e) for e in foo if Input.isnumeric(e) ]
 
     @classmethod
     def validate(cls: type, n_variables: int, function: list) -> list:
