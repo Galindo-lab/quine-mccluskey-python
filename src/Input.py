@@ -2,19 +2,20 @@ from src.Utils import Utils
 
 
 class Input():
-
+    
     @classmethod
     def integer(cls: type, message="") -> int:
         """ Capturar entero """
         print(message)
         while(True):
-            foo = input()
-            if foo.isnumeric():
+            # micropython no tiene el metodo "isnumeric"
+            try:
+                foo = int(input())
                 break
-            else:
+            except ValueError:
                 print("DATO INVALIDO")
         
-        return int(foo)
+        return foo
 
     @classmethod
     def char(cls: type, message="") -> str:
