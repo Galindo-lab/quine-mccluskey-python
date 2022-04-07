@@ -7,7 +7,14 @@ class Input():
     def integer(cls: type, message="") -> int:
         """ Capturar entero """
         print(message)
-        return int(input())
+        while(True):
+            foo = input()
+            if foo.isnumeric():
+                break
+            else:
+                print("DATO INVALIDO")
+        
+        return int(foo)
 
     @classmethod
     def char(cls: type, message="") -> str:
@@ -45,10 +52,11 @@ class Input():
 
         print("")
         for i in range(0, 1 << n):
-            foo = input(" ".join([
-                "%3s |" % str(i),
+            foo = input("".join([
+                "%03d" % i,
+                " | ",
                 Utils.bindigits(i, n),
-                ": ",
+                "? "
             ]))
 
             if foo == '-': d.append(i)
