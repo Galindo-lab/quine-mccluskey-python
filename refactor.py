@@ -5,6 +5,7 @@ def remove_nones(a: list):
 
     NOTE: Este es un método destructivo, no retorna nada
           pero  si modifica el contenido de la lista.
+
     """
     i = 0 
     while True:
@@ -17,7 +18,7 @@ def remove_nones(a: list):
 
 def diferencias(a: str, b: str) -> int:
     """
-    numero de caracteres diferentes en un string 
+    Numero de caracteres diferentes en un string 
     del mismo tamaño
     """
     count = 0
@@ -33,60 +34,113 @@ def bindigits(number: int, digits: int) -> str:
     return "{0:0{1}b}".format(number, digits)
 
 
+# *********************************************************
+#                       Clases
+# *********************************************************
+
+
 class Termino:
     """
     Esta clase unifica la lista de implicantes 
     con su representación, es un fila de la tabla
     de implicantes primos.
-    """
-    # representacion: str
-    # implicantes: tuple
-    # variables: int  # numero variables
 
-    # esencial:bool
+    Attributes
+    ----------
+    implicantes : tuple
+        lista de minterminos que representa el termino
+
+    representacion : str
+        miniterminos en forma de string, cada carácter
+        corresponde a una variable, si el valor es '0'
+        la variable esta negada, si es '-' es que no
+        se usa esa variable para representar los 
+        implicantes
+
+    variables : int
+        numero de variables
+
+    """
 
     def __init__(self, variables: int, implicantes: tuple):
+        """
+        Nuevo termino.
+        NOTE: No usar esta funcion directamente para
+              crear terminos. esta funcion no 
+              regenera la representacion
+
+        """
         self.implicantes = implicantes
         self.variables = variables
         self.representacion = ""
-        # self.esencial = False
 
     def __str__(self):
         foo = self.representacion + " " + str(self.implicantes)
         return foo
 
-    def regenerar(self):
+    
+    @classmethod
+    def por_minterminos(cls, variables, implicantes):
         """
-        Regenera la representacion del implicante
+        Crear un Termino en base a sus implicantes
+
         """
-        output = [None] * self.variables  # output
-        # base
-        b = bindigits(self.implicantes[0], self.variables)
+        foo = Termino(variables, implicantes)
+        foo.regenerar()
+        return foo
 
-        for implicante in self.implicantes:
-            # termino
-            a = bindigits(implicante, self.variables)
-
-            for i in range(len(a)):
-                output[i] = '-' if a[i] != b[i] else b[i]
-
-        self.representacion = "".join(output)
-
-    def es_adyacente(self, b):
-        return diferencias(self.representacion, b.representacion) == 1
-
+    
     def combine(self, a):
-        # elimina los valore repetidos y
-        # une las dos tuplas de implicantes
+        """
+        Retorna la union de dos terminos
+
+        """
+        # elimina los valore repetidos y une las dos
+        # tuplas de implicantes  
         implicantes = tuple(set(self.implicantes + a.implicantes))
         variables = self.variables
         return Termino.por_minterminos(variables, implicantes)
 
-    @classmethod
-    def por_minterminos(cls, variables, implicantes):
-        foo = Termino(variables, implicantes)
-        foo.regenerar()
-        return foo
+
+    def regenerar(self):
+        """
+        Regenera la representacion del implicante, mantiene
+        los terminos iguales 
+
+        Ejemplo
+        ----------
+        Si unimos 8 y 9, 0b1000 y 0b1001 respectivamente, 
+        la representacion deberia quedar así: '100-'.
+
+        """
+        # termino base
+        b = bindigits(self.implicantes[0], self.variables)
+        # output, uso una lista porque los string son datos
+        # inmutables            
+        output = [None] * self.variables  
+
+        for implicante in self.implicantes:
+            # termino para unir 
+            a = bindigits(implicante, self.variables)
+
+            for i in range(len(a)):
+                # si son diferentes '-' si son iguales
+                # mantiene el valor de el termino base
+                output[i] = '-' if a[i] != b[i] else b[i]
+
+        # convertir todo en un string
+        self.representacion = "".join(output)
+
+        
+    def es_adyacente(self, b):
+        """
+        Verificar si se pueden unir los términos, en el 
+        mapa de karnaugh se verían como sí fueran 
+        adyacentes.
+
+        """
+        return diferencias(self.representacion,
+                           b.representacion) == 1
 
 
 # *********************************************************
@@ -94,63 +148,102 @@ class Termino:
 # *********************************************************
 
 
-def extraer_primos(nvariables, terminos):
-    a = []  # iteracion actual
-    b = []  # siguiente iteracion
-    primos = []  # lista de terminos de implicantes primos
-    existentes = []  # lista de representaciones de los implicantes
+def extraer_primos(nvariables: int, terminos: list) -> list:
+    """
+    extrae los terminos del primos, que no se pueden 
+    reducir.
 
-    for termino in terminos:
+    """
+    a = []  # terminos iteracion actual
+    b = []  # terminos de la siguiente iteracion
+
+    # lista de terminos de implicantes primos
+    primos = []  
+    
+    # lista de representaciones de los implicantes, se usa
+    # para evitar duplicar terminos en 'primos'
+    existentes = []  
+
+    # crear la lista de terminos
+    for termino in terminos:    
         a.append(Termino.por_minterminos(nvariables, [termino]))
 
+
+    # sí hay terminos para reducir, todos son
+    # primos, continua           
     while len(a) != 0:
         for i in a:
-            cnv = 0
+            cnv = 0             # numero de combinaciones
             for j in a:
                 if not i.es_adyacente(j): continue
 
+                # si son adyasentes significa
+                # que se combinan
                 cnv += 1
                 termino = i.combine(j)
 
+                # si no existe ese mintermino en la lista de terminos
+                # se agrega a la lista
                 if not (termino.representacion in existentes):
                     b.append(termino)
                     existentes.append(termino.representacion)
 
-            if cnv == 0:
-                primos.append(i)
+            # si no se combiina el termino es primo
+            if cnv == 0: primos.append(i)
 
-        a = b.copy()
+        a = b.copy()            # siguiente iteracion
         b = []
 
     return primos
 
 
 def esenciales(primos, minter):
+    # posesiones de los términos esenciales, luego se
+    # usara pop
     indice_esenciales = []
+
+    # lista para guardar la lista al final
     foo = []
 
-    for i in minter:
+    # iterar los minterminos
+    for i in minter:       
+        
+        # cantidad de veces que aparece el termino
         freq = 0
+        # posiscion del termino esencial
         term = None
         for count, j in enumerate(primos):
+            # si el mintermino no aparece en la lista de
+            # implicantes del termino se salta
             if not i in j.implicantes: continue
+
+            # si hay mas de un termino que contiene
+            # el mintermino el termino NO es esencial y
+            # termina la iteracion
             if freq == 1:
+                # si el minitermino aparecido en otro termino
+                # se elimina su posicion
                 term = None
                 break
+
+            # si el minitermino no ha aparecido en otro termino
+            # se guarda su posicion
             freq += 1
             term = count
 
+        # si el minitermino no apareceio en otro termino
+        # se guarda
         if term != None:
-            # primos[term].esencial = True
             indice_esenciales.append(term)
 
+    # se extraen los terminos esenciales de la lista
+    # de terminos primos y se sustituyen con None
     for i in indice_esenciales:
         foo.append(primos[i])
         primos[i] = None
 
-
+    # se eliminan los None de la lista de primos
     remove_nones(primos)
-
 
     return foo
 
