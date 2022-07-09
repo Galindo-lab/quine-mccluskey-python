@@ -1,8 +1,18 @@
-def unos(numero: int) -> int:
+
+def remove_nones(a: list):
     """
-    numero de unos en la representacion binaria
+    Eliminar todos los elementos 'None' de una lista
+
+    NOTE: Este es un método destructivo, no retorna nada
+          pero  si modifica el contenido de la lista.
     """
-    return bin(numero).count("1")
+    i = 0 
+    while True:
+        if i >= len(a): break
+        if a[i] == None:
+            a.pop(i)
+        else:
+            i += 1
 
 
 def diferencias(a: str, b: str) -> int:
@@ -29,9 +39,9 @@ class Termino:
     con su representación, es un fila de la tabla
     de implicantes primos.
     """
-    representacion: str
-    implicantes: tuple
-    variables: int  # numero variables
+    # representacion: str
+    # implicantes: tuple
+    # variables: int  # numero variables
 
     # esencial:bool
 
@@ -138,13 +148,9 @@ def esenciales(primos, minter):
         foo.append(primos[i])
         primos[i] = None
 
-    i = 0  # remove nones
-    while True:
-        if i >= len(primos): break
-        if primos[i] == None:
-            primos.pop(i)
-        else:
-            i += 1
+
+    remove_nones(primos)
+
 
     return foo
 
@@ -167,7 +173,7 @@ todos_los_terminos = minterminos + redundancias
 primos = extraer_primos(nvariables, todos_los_terminos)
 terminos_esenciales = esenciales(primos, minterminos)
 
-print("*** Esenciales ***")
+print("**** Esenciales *****")
 for i in terminos_esenciales:
     print(i)
 
