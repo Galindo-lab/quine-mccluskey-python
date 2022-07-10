@@ -99,7 +99,8 @@ class Termino:
         # tuplas de implicantes  
         implicantes = tuple(set(self.implicantes + a.implicantes))
         variables = self.variables
-        return Termino.por_minterminos(variables, implicantes)
+        foo = Termino.por_minterminos(variables, implicantes)
+        return foo
 
 
     def regenerar(self):
@@ -128,6 +129,7 @@ class Termino:
                 # mantiene el valor de el termino base
                 output[i] = '-' if a[i] != b[i] else b[i]
 
+            b = "".join(output)
         # convertir todo en un string
         self.representacion = "".join(output)
 
@@ -139,8 +141,7 @@ class Termino:
         adyacentes.
 
         """
-        return diferencias(self.representacion,
-                           b.representacion) == 1
+        return diferencias(self.representacion,b.representacion) == 1
 
 
 # *********************************************************
@@ -168,7 +169,7 @@ def extraer_primos(nvariables: int, terminos: list) -> list:
     for termino in terminos:    
         a.append(Termino.por_minterminos(nvariables, [termino]))
 
-
+        
     # sí hay terminos para reducir, todos son
     # primos, continua           
     while len(a) != 0:
@@ -176,14 +177,13 @@ def extraer_primos(nvariables: int, terminos: list) -> list:
             cnv = 0             # numero de combinaciones
             for j in a:
                 if not i.es_adyacente(j): continue
-
                 # si son adyasentes significa
                 # que se combinan
                 cnv += 1
                 termino = i.combine(j)
 
-                # si no existe ese mintermino en la lista de terminos
-                # se agrega a la lista
+                # si no existe ese mintermino en la lista
+                # de terminos se agrega a la lista
                 if not (termino.representacion in existentes):
                     b.append(termino)
                     existentes.append(termino.representacion)
@@ -194,6 +194,8 @@ def extraer_primos(nvariables: int, terminos: list) -> list:
         a = b.copy()            # siguiente iteracion
         b = []
 
+    # print(existentes)
+        
     return primos
 
 
@@ -212,10 +214,11 @@ def esenciales(primos, minter):
         freq = 0
         # posiscion del termino esencial
         term = None
+        
         for count, j in enumerate(primos):
             # si el mintermino no aparece en la lista de
             # implicantes del termino se salta
-            if not i in j.implicantes: continue
+            if i in j.implicantes: continue
 
             # si hay mas de un termino que contiene
             # el mintermino el termino NO es esencial y
@@ -232,8 +235,8 @@ def esenciales(primos, minter):
             term = count
 
         # si el minitermino no apareceio en otro termino
-        # se guarda
-        if term != None:
+        # se guarda ni tampoco aparece en la lista de terminos 
+        if term != None and not term in indice_esenciales :
             indice_esenciales.append(term)
 
     # se extraen los terminos esenciales de la lista
@@ -250,10 +253,9 @@ def esenciales(primos, minter):
 
 print("")
 
-nvariables = 4
-
-minterminos = [4, 8, 10, 11, 12, 15]
-redundancias = [9, 14]
+# nvariables = 4
+# minterminos = [4, 8, 10, 11, 12, 15]
+# redundancias = [9, 14]
 
 # minterminos = [2,7,9,10,11,15]
 # redundancias = [1,8]
@@ -261,9 +263,18 @@ redundancias = [9, 14]
 # minterminos = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 # redundancias = []
 
+
+nvariables = 4
+minterminos = [3,7,11,12,13,14,15]
+redundancias = []
+
+
+
+
 todos_los_terminos = minterminos + redundancias
 
 primos = extraer_primos(nvariables, todos_los_terminos)
+
 terminos_esenciales = esenciales(primos, minterminos)
 
 print("**** Esenciales *****")
