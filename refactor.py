@@ -1,4 +1,31 @@
 
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# 
+#         ##    .#              
+# /     ###############           Luis Eduardo Galindo Amaya
+# ######     ,#     /####         https://galindosoft.neocities.org
+# (##       #          #######    https://github.com/Galindo-lab
+#         #        ##     #    
+#       (      ## ####         
+#      #,  ,##      ##          
+#     #####         ##         
+#                   /
+# 
+# https://github.com/Galindo-lab/quine-mccluskey-python
+# 
+
 def remove_nones(a: list):
     """
     Eliminar todos los elementos 'None' de una lista
@@ -32,6 +59,20 @@ def bindigits(number: int, digits: int) -> str:
     Convertir numero a binario de tamaño fijo
     """
     return "{0:0{1}b}".format(number, digits)
+
+
+def es_numerico(value: str) -> bool:
+    """
+    Verificar si un string contine un valor 
+    HACK: micropython no tiene la funcion 
+          is_numeric.
+    numerico
+    """
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False
 
 
 # *********************************************************
@@ -147,7 +188,73 @@ class Termino:
 
 # *********************************************************
 #                          CODE
-# *********************************************************
+# ********************************************************* 
+
+    
+def captura_entero(message="") -> int:
+    """ 
+    Capturar un valor entero y muestra un 
+    mensaje si el valor es invalido
+    """
+    while(True):
+        foo = input(message + "?\n")
+        if es_numerico(foo): break
+        print("DATO INVALIDO")
+
+    return int(foo)
+
+
+def captura_list(message="", separator=",") -> list:
+    """ 
+    Captura una lista de enteros
+    """
+    foo = input(message + "?\n").split(separator)
+    return [ int(e) for e in foo if es_numerico(e) ]
+
+
+def captura_char(message="") -> str:
+    """ 
+    Capturar caracter 
+    """
+    while(True):
+        foo = input(message + "?\n")
+        if len(foo) > 0: break
+        print("DATO INVALIDO")
+        
+    return foo[0]
+
+
+def en_rango(numero_variables:int, activaciones:int, redundancias:list):
+    lim = (2 << (numero_variables - 1))-1
+
+    for i in range(len(activaciones)):
+        if activaciones[i] > lim:
+            print(activaciones[i], "FUERA DE RANGO")
+            activaciones[i] = None
+
+    for i in range(len(redundancias)):
+        if redundancias[i] > lim:
+            print(redundancias[i], "FUERA DE RANGO")
+            redundancias[i] = None
+        
+            
+    remove_nones(activaciones)
+    remove_nones(redundancias)
+
+
+def duplicados(activaciones:int, redundancias:list):
+    """
+    elimina terminos que aparecen en ambas 
+    listas, preserva los valores en activaciones
+    y los duplicados
+
+    origen:
+        https://stackoverflow.com/a/4211239
+
+    """
+    activaciones_set = set(activaciones)
+    redundancias[:] = list(set(redundancias) - activaciones_set)
+    activaciones[:] = list(activaciones_set)
 
 
 def extraer_primos(nvariables: int, terminos: list) -> list:
@@ -204,7 +311,7 @@ def esenciales(primos, minter):
     # posiciones de los términos esenciales, luego se
     # usara pop
     indice_esenciales = []
-    minterminos_cubiertos = []
+    # minterminos_cubiertos = []
 
     # lista para guardar la lista al final
     foo = []
@@ -216,8 +323,12 @@ def esenciales(primos, minter):
         freq = 0
         # posiscion del termino esencial
         term = None
-        
-        for count, j in enumerate(primos):
+
+        # Micropython no tiene enumerate
+        # for count, j in enumerate(primos):
+        for count in range(len(primos)):
+            j = primos[count]
+            
             # si el mintermino no aparece en la lista de
             # implicantes del termino se salta
             if not i in j.implicantes: continue
@@ -239,7 +350,7 @@ def esenciales(primos, minter):
         # si el minitermino no apareceio en otro termino
         # se guarda ni tampoco aparece en la lista de terminos 
         if term != None and not term in indice_esenciales :
-            minterminos_cubiertos.append(i)
+            # minterminos_cubiertos.append(i)
             indice_esenciales.append(term)
 
     # se extraen los terminos esenciales de la lista
@@ -248,65 +359,67 @@ def esenciales(primos, minter):
         foo.append(primos[i])
         primos[i] = None
 
-    for i in indice_esenciales:
-        minter[i] = None
+    # for i in indice_esenciales:
+    #     minter[i] = None
 
     # se eliminan los None de la lista de primos
-    remove_nones(minter)
+    # remove_nones(minter)
     remove_nones(primos)
 
     return foo
 
 
+def terminos_faltantes(esenciales, minterminos):
+    terminos = set([])
 
+    for i in esenciales:
+        terminos = terminos | set(i.implicantes)
 
-# nvariables = 3
-# minterminos = [3,4,5]
-# redundancias = [1,6]
+    faltantes = set(minterminos) - terminos
 
+    return list(faltantes)
 
+    
 
-nvariables = 4
-# minterminos = [4, 8, 10, 11, 12, 15]
-# redundancias = [9, 14]
+def x():
+    print("")
+    print("---------------------")
+    print("      REDUCCION      ")
+    print("  DE FUNCION LOGICA  ")
+    print("---------------------")
+    print("")
+    
+    numero_variables = captura_entero("NUMERO DE VARIABLES")
+    minterminos = captura_list("ACTIVACION")
+    redundancias = captura_list("REDUNDANCIAS")
+    
+    print("")
+    duplicados(minterminos, redundancias)
+    en_rango(numero_variables, minterminos, redundancias)
+    print(minterminos)
+    print(redundancias)
+    print("")
 
-minterminos = [2,7,9,10,11,15]
-redundancias = [1,8]
+    print("---------------------")
+    print("      RESULTADO      ")
+    print("---------------------")
+    print("")
+    
+    todos_los_terminos = minterminos + redundancias
+    primos = extraer_primos(numero_variables, todos_los_terminos)
+    terminos_esenciales = esenciales(primos, minterminos)
+    faltantes = terminos_faltantes(terminos_esenciales, minterminos)
+    
+    print("ESENCIALES:")
+    for i in terminos_esenciales:
+        print(i)
+    
+    print("")
+    
+    print("NO ESENCIALES:",faltantes)
+    for i in primos:
+        print(i)
+    print("")
 
-# minterminos = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-# redundancias = []
+x()
 
-# minterminos = [3,7,11,12,13,14,15]
-# redundancias = []
-
-# minterminos = [0,1,2,3,5,7,8,10,12,13,15]
-# redundancias = []
-
-# minterminos = [0,4,5,7,8,11,12,15]
-# redundancias = []
-
-# minterminos = [2,6,8,9,10,11,14,15]
-# redundancias = []
-
-# minterminos = [ 0,1,2,5,6,7,8,9,10,14]
-# redundancias = []
-
-
-
-todos_los_terminos = minterminos + redundancias
-
-primos = extraer_primos(nvariables, todos_los_terminos)
-
-terminos_esenciales = esenciales(primos, minterminos)
-
-print("")
-
-print("Esenciales")
-for i in terminos_esenciales:
-    print(i)
-
-print("")
-
-print("No Esenciales:", minterminos)
-for i in primos:
-    print(i)
