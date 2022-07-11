@@ -412,7 +412,7 @@ def x():
     print("---------------------")
     print("")
 
-    entrada = captura_char("1.Lista // 2.Tabla")
+    entrada = captura_char("1.LISTA // 2.TABLA")
     
     numero_variables = captura_entero("NUMERO DE VARIABLES")
 

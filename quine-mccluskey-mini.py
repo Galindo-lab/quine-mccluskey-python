@@ -93,7 +93,7 @@ def captura_tabla(variables):
 		elif foo=='1':activaciones.append(i)
 	print(A);return activaciones,redundancias
 def x():
-	A='---------------------';print('');print(A);print('      REDUCCION      ');print('  DE FUNCION LOGICA  ');print(A);print('');entrada=captura_char('1.Lista // 2.Tabla');numero_variables=captura_entero('NUMERO DE VARIABLES')
+	A='---------------------';print('');print(A);print('      REDUCCION      ');print('  DE FUNCION LOGICA  ');print(A);print('');entrada=captura_char("1.LISTA // 2.TABLA");numero_variables=captura_entero('NUMERO DE VARIABLES')
 	if entrada=='2':print('');minterminos,redundancias=captura_tabla(numero_variables)
 	else:minterminos=captura_list('ACTIVACION');redundancias=captura_list('REDUNDANCIAS')
 	print('');duplicados(minterminos,redundancias);en_rango(numero_variables,minterminos,redundancias);print(minterminos);print(redundancias);print('');print(A);print('      RESULTADO      ');print(A);print('');todos_los_terminos=minterminos+redundancias;primos=extraer_primos(numero_variables,todos_los_terminos);terminos_esenciales=esenciales(primos,minterminos);faltantes=terminos_faltantes(terminos_esenciales,minterminos);print('ESENCIALES:')

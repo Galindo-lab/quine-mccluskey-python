@@ -1,0 +1,143 @@
+#+TITLE:  Algoritmo de Quine–McCluskey
+#+AUTHOR: Luis E. Galindo Amaya
+
+#+DESCRIPTION: Algoritmo de Quine–McCluskey para la calculadora fx-cg50
+
+* Info
+Implementacion del algoritmo de Quine–McCluskey para simplificar 
+funciones logicas pensado para funcionar en la calculadora 
+Casio fx-cg50.
+
+https://es.wikipedia.org/wiki/Algoritmo_Quine–McCluskey
+
+* Terminos
+https://wikimedia.org/api/rest_v1/media/math/render/svg/8e9a983dd4d6aec3ed0d21a5a12ed52a56dc47004
+
+- m :: activaciones, donde la funcion es 1
+- d :: redundancias, deonde el valor es indiferente
+
+* Documentacion 
+** Entrada de datos
+*** Lista
+Ingresas los valores de activacion separados por ','. 
+
+*** Tabla
+La tabla acepta '1' y '-' cualquier otro valor será intepretado 
+como '0'.
+
+* Interpretar el resultado 
+** Ingresar datos
+Analicemos un ejemplo para entender los resultados del programa
+
+#+BEGIN_SRC 
+
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+4,8,10,11,12,15
+REDUNDANCIAS?
+9,14
+
+#+END_SRC
+
+** Terminos esenciales y no esenciales
+los términos esenciales son los que contienen un mintermino único, un
+mintermino que no aparece en otros terminos, por lo que 
+obligatoriamente sera parte de la funcion resultante.
+
+los terminos no esenciales son los terminos cuyos terminos se repiten
+en otro termino, en este caso el 8.
+
+#+BEGIN_SRC 
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-100 (4, 12)
+1-1- (10, 11, 14, 15)
+
+NO ESENCIALES: [8]
+10-- (8, 9, 10, 11)
+1--0 (8, 10, 12, 14)
+
+#+END_SRC
+
+** Extrayendo la ecuacion
+Ahora solo basta convertir el binario a nuestra ecuacion, como 
+tenemos dos teminos esenciales los pasamos directamente. Cada 
+digito correponde a el estado de una variable
+
+- '1' :: es no negada
+- '0' :: es negada
+- '-' :: es inexistente
+
+#+BEGIN_SRC 
+
+ ABCD
+ -100 (4, 12) 
+  |        __
+  +-----> BCD  
+
+ 1-1- (10, 11, 14, 15)
+  |       
+  +-----> AC 
+
+ la ecuacion para los minterminos es:
+ 
+    [10, 11, 14, 15, 4, 12] 
+                 __
+           AC + BCD
+
+
+ Importante: los terminos [9,14] son
+             redundantes.
+
+#+END_SRC
+
+Nuestra funcion original pedía:
+#+BEGIN_SRC 
+
+     [4,8,10,11,12,15] 
+
+#+END_SRC
+
+y nuestra funcion actualmente da
+#+BEGIN_SRC 
+
+     [4,10,11,12,15] 
+
+#+END_SRC
+
+nos falta un termino, el temino faltante lo podemos 
+encontrar en los terminos 'NO ESENCIALES'
+
+#+BEGIN_SRC        
+ NO ESENCIALES: [8]
+ 10-- (8, 9, 10, 11)
+  |        _
+  +-----> AB 
+
+ 1--0 (8, 10, 12, 14)
+  |        _
+  +-----> AD
+
+#+END_SRC
+
+ambos terminos contienen el numero '8' que nos falta
+por lo que tenemos más de una posible solucion:
+
+#+BEGIN_SRC 
+       __    _
+ AC + BCD + AB
+       __     _
+ AC + BCD  + AD
+
+#+END_SRC
