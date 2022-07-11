@@ -1,3 +1,7 @@
+
+# Documentacion 
+# https://github.com/Galindo-lab/quine-mccluskey-python
+
 _D='DATO INVALIDO'
 _C='?\n'
 _B=True
@@ -38,9 +42,9 @@ def captura_entero(message=''):
 		print(_D)
 	return int(foo)
 def captura_list(message='',separator=','):foo=input(message+_C).split(separator);return[int(e)for e in foo if es_numerico(e)]
-def captura_char(message=''):
+def captura_char(message='',end=_C):
 	while _B:
-		foo=input(message+_C)
+		foo=input(message+end)
 		if len(foo)>0:break
 		print(_D)
 	return foo[0]
@@ -81,8 +85,18 @@ def terminos_faltantes(esenciales,minterminos):
 	terminos=set([])
 	for i in esenciales:terminos=terminos|set(i.implicantes)
 	faltantes=set(minterminos)-terminos;return list(faltantes)
+def captura_tabla(variables):
+	A='-----+---------+-----';activaciones=[];redundancias=[];print(A);print(' DEC | BIN     | OUT ');print(A)
+	for i in range(2<<variables-1):
+		message=' %3d | %s%s |  '%(i,bindigits(i,variables),' '*(7-variables));foo=captura_char(message,end='')
+		if foo=='-':redundancias.append(i)
+		elif foo=='1':activaciones.append(i)
+	print(A);return activaciones,redundancias
 def x():
-	A='---------------------';print('');print(A);print('      REDUCCION      ');print('  DE FUNCION LOGICA  ');print(A);print('');numero_variables=captura_entero('NUMERO DE VARIABLES');minterminos=captura_list('MINTERMINOS');redundancias=captura_list('REDUNDANCIAS');print('');duplicados(minterminos,redundancias);en_rango(numero_variables,minterminos,redundancias);print(minterminos);print(redundancias);print('');print(A);print('      RESULTADO      ');print(A);print('');todos_los_terminos=minterminos+redundancias;primos=extraer_primos(numero_variables,todos_los_terminos);terminos_esenciales=esenciales(primos,minterminos);faltantes=terminos_faltantes(terminos_esenciales,minterminos);print('ESENCIALES:')
+	A='---------------------';print('');print(A);print('      REDUCCION      ');print('  DE FUNCION LOGICA  ');print(A);print('');entrada=captura_char('1.Lista // 2.Tabla');numero_variables=captura_entero('NUMERO DE VARIABLES')
+	if entrada=='2':print('');minterminos,redundancias=captura_tabla(numero_variables)
+	else:minterminos=captura_list('ACTIVACION');redundancias=captura_list('REDUNDANCIAS')
+	print('');duplicados(minterminos,redundancias);en_rango(numero_variables,minterminos,redundancias);print(minterminos);print(redundancias);print('');print(A);print('      RESULTADO      ');print(A);print('');todos_los_terminos=minterminos+redundancias;primos=extraer_primos(numero_variables,todos_los_terminos);terminos_esenciales=esenciales(primos,minterminos);faltantes=terminos_faltantes(terminos_esenciales,minterminos);print('ESENCIALES:')
 	for i in terminos_esenciales:print(i)
 	print('');print('NO ESENCIALES:',faltantes)
 	for i in primos:print(i)

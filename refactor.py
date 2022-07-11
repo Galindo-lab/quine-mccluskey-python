@@ -212,12 +212,12 @@ def captura_list(message="", separator=",") -> list:
     return [ int(e) for e in foo if es_numerico(e) ]
 
 
-def captura_char(message="") -> str:
+def captura_char(message="", end="?\n") -> str:
     """ 
     Capturar caracter 
     """
     while(True):
-        foo = input(message + "?\n")
+        foo = input(message + end)
         if len(foo) > 0: break
         print("DATO INVALIDO")
         
@@ -370,6 +370,10 @@ def esenciales(primos, minter):
 
 
 def terminos_faltantes(esenciales, minterminos):
+    """
+    Busca los terminos faltantes en los terminos
+    esenciales.
+    """
     terminos = set([])
 
     for i in esenciales:
@@ -379,6 +383,25 @@ def terminos_faltantes(esenciales, minterminos):
 
     return list(faltantes)
 
+
+def captura_tabla(variables:int):
+    activaciones = []
+    redundancias = []
+
+    print("-----+---------+-----")
+    print(" DEC | BIN     | OUT ")
+    print("-----+---------+-----")
+    for i in range( (2 << (variables-1))  ):
+        message = " %3d | %s%s |  "%(i, bindigits(i,variables), " "*(7-variables))
+        
+        foo = captura_char(message , end="")
+        if foo == "-": redundancias.append(i)
+        elif foo == "1": activaciones.append(i)
+    print("-----+---------+-----")
+        
+    return activaciones, redundancias
+            
+    
     
 
 def x():
@@ -388,10 +411,17 @@ def x():
     print("  DE FUNCION LOGICA  ")
     print("---------------------")
     print("")
+
+    entrada = captura_char("1.Lista // 2.Tabla")
     
     numero_variables = captura_entero("NUMERO DE VARIABLES")
-    minterminos = captura_list("ACTIVACION")
-    redundancias = captura_list("REDUNDANCIAS")
+
+    if entrada == '2':
+        print("")
+        minterminos, redundancias = captura_tabla(numero_variables)
+    else:
+        minterminos = captura_list("ACTIVACION")
+        redundancias = captura_list("REDUNDANCIAS")
     
     print("")
     duplicados(minterminos, redundancias)
@@ -422,4 +452,3 @@ def x():
     print("")
 
 x()
-
