@@ -1,0 +1,450 @@
+
+#+TITLE:  Ejemplo de Quine–McCluskey
+
+#+Author: Luis Eduardo Galindo Amaya
+#+email:  egalindo54@uabc.edu.mx
+#+DATE:   \today
+
+#+LANGUAGE: es
+#+LATEX_HEADER: \usepackage[spanish]{babel}
+
+#+latex_header: \documentclass[10pt,a5paper]{article}
+#+latex_header: \usepackage[margin=1cm,a5paper]{geometry}
+#+latex_header: \pagenumbering{gobble}
+
+#+OPTIONS: num:1
+
+\toc
+
+\newpage
+
+* Control De Un Display De Siete Segmentos
+Cada variable representa la activacion de cada uno de los segmentos del 
+display, 'BCD' es el valor codificado en binario del numero, entonces
+lo que estamos haciendo es convertir cuetro entradas binarias en siete
+para controlar el display.
+
+\vspace{0.5cm}
+
+\noindent
+#+attr_latex: :options {.5\textwidth}
+#+begin_minipage
+
+#+ATTR_LaTeX: :align |c|c|ccccccc|
+|----+------+---+---+---+---+---+---+---|
+| ID |  BCD | A | B | C | D | E | F | G |
+|----+------+---+---+---+---+---+---+---|
+|  0 | 0000 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
+|  1 | 0001 | 0 | 1 | 1 | 0 | 0 | 0 | 0 |
+|  2 | 0010 | 1 | 1 | 0 | 1 | 1 | 0 | 1 |
+|  3 | 0011 | 1 | 1 | 1 | 1 | 0 | 0 | 1 |
+|  4 | 0100 | 0 | 1 | 1 | 0 | 0 | 1 | 0 |
+|  5 | 0101 | 1 | 0 | 1 | 1 | 0 | 1 | 1 |
+|  6 | 0110 | 1 | 0 | 1 | 1 | 1 | 1 | 1 |
+|  7 | 0111 | 1 | 1 | 1 | 0 | 0 | 0 | 0 |
+|  8 | 1000 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+|  9 | 1001 | 1 | 1 | 1 | 0 | 0 | 1 | 1 |
+| 10 | 1010 | x | x | x | x | x | x | x |
+| 11 | 1011 | x | x | x | x | x | x | x |
+| 12 | 1100 | x | x | x | x | x | x | x |
+| 13 | 1101 | x | x | x | x | x | x | x |
+| 14 | 1110 | x | x | x | x | x | x | x |
+| 15 | 1111 | x | x | x | x | x | x | x |
+|----+------+---+---+---+---+---+---+---|
+
+#+end_minipage
+#+attr_latex: :options {.5\textwidth}
+#+begin_minipage
+
+#+attr_latex: :width 3.5cm
+[[./7_Segment_Display.png]]
+
+#+end_minipage
+
+* Variable A
+Cada columna de la tabla corresponde a una variable, sí extraemos la columna
+correspondiente a 'A' obtendremos algo como esto:
+
+#+ATTR_LaTeX: :align |ccccccccccccccccc|
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+| ID | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+|    | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 |  x |  x |  x |  x |  x |  x |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+
+Podemos convertir esta tabla en su notacion de sumatoria equivalente para 
+ingresarla mas facilmente en el programa, de igual manera el programa tiene
+soporte para ingresar tablas:
+
+#+NAME: funcion_a
+#+begin_equation
+A(w,x,y,z) = \sum m(0,2,3,5,6,7,8,9) + \sum d(10,11,12,13,14,15)
+#+end_equation
+
+los valores en 'm' son las activaciones y 'd' son los valores que no importan,
+también conocidos como 'redundancias'. Ahora podemos emepzar a usar el programa.
+
+** Entradas 
+#+BEGIN_SRC 
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?      Aquí podemos elegir el metodo de entrada
+1  
+NUMERO DE VARIABLES?     Tenemos 4 variables 'w', 'x', 'y' y 'z'
+4
+ACTIVACION?              Las activaciones, esto es 'm'
+0,2,3,5,6,7,8,9 
+REDUNDANCIAS?            Redundancias, esto es 'd'
+10,11,12,13,14,15
+
+[0, 2, 3, 5, 6, 7, 8, 9] Aquí muestra la lista 'm'
+[10, 11, 12, 13, 14, 15] y aca la lista 'd'
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:               Los minterminos esenciales
+-0-0 (0, 8, 2, 10)                 
+--1- (2, 3, 6, 7, 10, 11, 14, 15)
+-1-1 (13, 15, 5, 7)
+1--- (8, 9, 10, 11, 12, 13, 14, 15)
+
+NO ESENCIALES: []
+
+#+END_SRC
+
+\newpage
+
+** Interpretando los resultados
+Ahora tenemos que extraer una expresión booleana de la salida del programa,
+debemos tener en cuenta que nuestras variables tienen mas valor dependiendo 
+su posicion. En la forma de [[funcion_a][sumatoria]] 'w' es el bit más significativo porque 
+esta primero y 'z' es el bit menos significativo, representa el uno. Cada bit
+tiene un valor que representa el estado de la variable ('1', '0' ó '-'), '1' 
+es activo, '0' es negado  y '-' es que no forma parte del mintermino.
+
+#+BEGIN_SRC 
+
+ESENCIALES:              Los minterminos esenciales
+-0-0 (0, 8, 2, 10)                 
+--1- (2, 3, 6, 7, 10, 11, 14, 15)
+-1-1 (13, 15, 5, 7)
+1--- (8, 9, 10, 11, 12, 13, 14, 15)
+
+NO ESENCIALES: []        Si no hay términos faltantes significa
+                         que solo existe una solución para nuestras
+                         especificaciones
+
+#+END_SRC
+
+Ahora como todos los mintermino son esenciales, lo cual significa que es 
+imposible omitirlos para obtener nuestra funcion, los unimos para crear la 
+función y obtenemos:
+
+| w | x | y | z |   | Representación      |
+|---+---+---+---+---+---------------------|
+| - | 0 | - | 0 |   | \( \bar x \bar z \) |
+| - | - | 1 | - |   | \( y \)             |
+| - | 1 | - | 1 |   | \( xz \)            |
+| 1 | - | - | - |   | \( w \)             |
+|---+---+---+---+---+---------------------|
+
+#+begin_equation
+A(w,x,y,z) = xz + \bar x \bar z + y + w
+#+end_equation
+
+Esta es la forma de suma mas simplificada de la funcion, si usamos un poco de 
+álgebra booleana podemos reducir un poco más la funcion añadiendo una compuerta
+'xnor':
+
+#+begin_equation
+A(w,x,y,z) = x \odot z + y + w
+#+end_equation
+* Variable B
+** Activaciones
+#+ATTR_LaTeX: :align |ccccccccccccccccc|
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+| ID | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+|    | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 | 1 | 1 |  x |  x |  x |  x |  x |  x |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+#+begin_equation
+B(w,x,y,z) = \sum m(0,1,2,3,4,7,8,9) + \sum d(10,11,12,13,14,15)
+#+end_equation
+
+** Entradas
+#+BEGIN_SRC 
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+0,1,2,3,4,7,8,9
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-0-- (0, 1, 2, 3, 8, 9, 10, 11)
+--00 (0, 8, 4, 12)
+--11 (11, 3, 15, 7)
+
+NO ESENCIALES: []                    
+1--- (8, 9, 10, 11, 12, 13, 14, 15)  Hay términos no esenciales 
+                                     pero no hay términos 
+                                     faltantes así que se ignora
+#+END_SRC
+
+* Variable C
+** Activaciones
+#+ATTR_LaTeX: :align |ccccccccccccccccc|
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+| ID | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+|    | 1 | 1 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |  x |  x |  x |  x |  x |  x |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+#+begin_equation
+C(w,x,y,z) = \sum m(0,1,3,4,5,6,7,8,9) + \sum d(10,11,12,13,14,15)
+#+end_equation
+
+** Entradas
+#+BEGIN_SRC 
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+0,1,3,4,5,6,7,8,9
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+[0, 1, 3, 4, 5, 6, 7, 8, 9]
+[10, 11, 12, 13, 14, 15]
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+--0- (0, 1, 4, 5, 8, 9, 12, 13)
+---1 (1, 3, 5, 7, 9, 11, 13, 15)
+-1-- (4, 5, 6, 7, 12, 13, 14, 15)
+
+NO ESENCIALES: []
+1--- (8, 9, 10, 11, 12, 13, 14, 15)
+#+END_SRC
+* Variable D
+** Activaciones
+#+ATTR_LaTeX: :align |ccccccccccccccccc|
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+| ID | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+|    | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 0 |  x |  x |  x |  x |  x |  x |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+#+begin_equation
+D(w,x,y,z) = \sum m(0,2,3,5,6,8) + \sum d(10,11,12,13,14,15)
+#+end_equation
+
+** Entradas
+#+BEGIN_SRC 
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+0,2,3,5,6,8
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-0-0 (0, 8, 2, 10)
+-01- (10, 11, 2, 3)
+-101 (13, 5)
+--10 (2, 10, 6, 14)
+
+NO ESENCIALES: []
+1--0 (8, 10, 12, 14)
+1-1- (10, 11, 14, 15)
+11-- (12, 13, 14, 15)
+#+END_SRC
+
+* Variable E
+** Activaciones
+#+ATTR_LaTeX: :align |ccccccccccccccccc|
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+| ID | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+|    | 1 | 0 | 1 | 0 | 0 | 0 | 1 | 0 | 1 | 0 |  x |  x |  x |  x |  x |  x |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+#+begin_equation
+E(w,x,y,z) = \sum m(0,2,6,8) + \sum d(10,11,12,13,14,15)
+#+end_equation
+
+** Entradas
+#+BEGIN_SRC 
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4      
+ACTIVACION?
+0,2,6,8
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+[0, 8, 2, 6]
+[10, 11, 12, 13, 14, 15]
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-0-0 (0, 8, 2, 10)
+--10 (2, 10, 6, 14)
+
+NO ESENCIALES: []
+1--0 (8, 10, 12, 14)
+1-1- (10, 11, 14, 15)
+11-- (12, 13, 14, 15)
+#+END_SRC
+
+* Variable F
+** Activaciones
+#+ATTR_LaTeX: :align |ccccccccccccccccc|
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+| ID | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+|    | 1 | 0 | 0 | 0 | 1 | 1 | 1 | 0 | 1 | 1 |  x |  x |  x |  x |  x |  x |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+#+begin_equation
+F(w,x,y,z) = \sum m(0,4,5,6,6,9) + \sum d(10,11,12,13,14,15)
+#+end_equation
+
+** Entradas
+#+BEGIN_SRC 
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+0,4,5,6,6,9
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+[0, 4, 5, 6, 9]
+[10, 11, 12, 13, 14, 15]
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+0-00 (0, 4)
+-10- (12, 13, 4, 5)
+-1-0 (4, 12, 6, 14)
+1--1 (9, 11, 13, 15)
+
+NO ESENCIALES: []
+1-1- (10, 11, 14, 15)
+11-- (12, 13, 14, 15)
+#+END_SRC
+
+* Variable G
+** Activaciones
+#+ATTR_LaTeX: :align |ccccccccccccccccc|
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+| ID | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+|    | 0 | 0 | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 1 |  x |  x |  x |  x |  x |  x |
+|----+---+---+---+---+---+---+---+---+---+---+----+----+----+----+----+----|
+#+begin_equation
+G(w,x,y,z) = \sum m(2,3,5,6,8,9) + \sum d(10,11,12,13,14,15)
+#+end_equation
+
+** Entradas
+#+BEGIN_SRC 
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+2,3,5,6,8,9
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+[2, 3, 5, 6, 8, 9]
+[10, 11, 12, 13, 14, 15]
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-01- (10, 11, 2, 3)
+-101 (13, 5)
+--10 (2, 10, 6, 14)
+1--- (8, 9, 10, 11, 12, 13, 14, 15)
+
+NO ESENCIALES: []
+#+END_SRC
+
+\newpage
+
+* Resultados
+
+
+
+#+BEGIN_EXPORT latex
+\begin{equation}
+  \begin{aligned}
+    A &: ~ xz + \bar x \bar z + y + w \\
+    B &: ~ \bar y \bar z + yz + \bar x \\
+    C &: ~ \bar y + z + x \\
+    D &: ~ x \bar y z + \bar x y + y \bar z + \bar x  \bar z \\
+    E &: ~ \bar x \bar z + y \bar z \\
+    F &: ~ \bar w \bar y \bar z + x \bar y + x \bar z + wz \\
+    G &: ~ \bar x y + x \bar y z + y \bar z + w
+  \end{aligned}
+\end{equation}
+#+END_EXPORT

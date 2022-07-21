@@ -1,0 +1,519 @@
+% Created 2022-07-20 mié 20:16
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[spanish]{babel}
+\documentclass[10pt,a5paper]{article}
+\usepackage[margin=1cm,a5paper]{geometry}
+\pagenumbering{gobble}
+\setcounter{secnumdepth}{1}
+\author{Luis Eduardo Galindo Amaya}
+\date{\today}
+\title{Ejemplo de Quine–McCluskey}
+\hypersetup{
+ pdfauthor={Luis Eduardo Galindo Amaya},
+ pdftitle={Ejemplo de Quine–McCluskey},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 26.3 (Org mode 9.1.9)}, 
+ pdflang={Spanish}}
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\toc
+
+\newpage
+
+\section{Control De Un Display De Siete Segmentos}
+\label{sec:orgbf0d6db}
+Cada variable representa la activacion de cada uno de los segmentos del 
+display, 'BCD' es el valor codificado en binario del numero, entonces
+lo que estamos haciendo es convertir cuetro entradas binarias en siete
+para controlar el display.
+
+\vspace{0.5cm}
+
+\noindent
+\begin{minipage}{.5\textwidth}
+
+
+\begin{center}
+\begin{tabular}{|c|c|ccccccc|}
+\hline
+ID & BCD & A & B & C & D & E & F & G\\
+\hline
+0 & 0000 & 1 & 1 & 1 & 1 & 1 & 1 & 0\\
+1 & 0001 & 0 & 1 & 1 & 0 & 0 & 0 & 0\\
+2 & 0010 & 1 & 1 & 0 & 1 & 1 & 0 & 1\\
+3 & 0011 & 1 & 1 & 1 & 1 & 0 & 0 & 1\\
+4 & 0100 & 0 & 1 & 1 & 0 & 0 & 1 & 0\\
+5 & 0101 & 1 & 0 & 1 & 1 & 0 & 1 & 1\\
+6 & 0110 & 1 & 0 & 1 & 1 & 1 & 1 & 1\\
+7 & 0111 & 1 & 1 & 1 & 0 & 0 & 0 & 0\\
+8 & 1000 & 1 & 1 & 1 & 1 & 1 & 1 & 1\\
+9 & 1001 & 1 & 1 & 1 & 0 & 0 & 1 & 1\\
+10 & 1010 & x & x & x & x & x & x & x\\
+11 & 1011 & x & x & x & x & x & x & x\\
+12 & 1100 & x & x & x & x & x & x & x\\
+13 & 1101 & x & x & x & x & x & x & x\\
+14 & 1110 & x & x & x & x & x & x & x\\
+15 & 1111 & x & x & x & x & x & x & x\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\begin{minipage}{.5\textwidth}
+
+
+\begin{center}
+\includegraphics[width=3.5cm]{./7_Segment_Display.png}
+\end{center}
+\end{minipage}
+
+\section{Variable A}
+\label{sec:org554a0db}
+Cada columna de la tabla corresponde a una variable, sí extraemos la columna
+correspondiente a 'A' obtendremos algo como esto:
+
+\begin{center}
+\begin{tabular}{|ccccccccccccccccc|}
+\hline
+ID & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+\hline
+ & 1 & 0 & 1 & 1 & 0 & 1 & 1 & 1 & 1 & 1 & x & x & x & x & x & x\\
+\hline
+\end{tabular}
+\end{center}
+
+Podemos convertir esta tabla en su notacion de sumatoria equivalente para 
+ingresarla mas facilmente en el programa, de igual manera el programa tiene
+soporte para ingresar tablas:
+
+\begin{equation}
+A(w,x,y,z) = \(\sum\) m(0,2,3,5,6,7,8,9) + \(\sum\) d(10,11,12,13,14,15)
+\label{orga6e9a70}
+\end{equation}
+
+los valores en 'm' son las activaciones y 'd' son los valores que no importan,
+también conocidos como 'redundancias'. Ahora podemos emepzar a usar el programa.
+
+\subsection*{Entradas}
+\label{sec:orgb9a4b97}
+\begin{verbatim}
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?      Aquí podemos elegir el metodo de entrada
+1  
+NUMERO DE VARIABLES?     Tenemos 4 variables 'w', 'x', 'y' y 'z'
+4
+ACTIVACION?              Las activaciones, esto es 'm'
+0,2,3,5,6,7,8,9 
+REDUNDANCIAS?            Redundancias, esto es 'd'
+10,11,12,13,14,15
+
+[0, 2, 3, 5, 6, 7, 8, 9] Aquí muestra la lista 'm'
+[10, 11, 12, 13, 14, 15] y aca la lista 'd'
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:               Los minterminos esenciales
+-0-0 (0, 8, 2, 10)                 
+--1- (2, 3, 6, 7, 10, 11, 14, 15)
+-1-1 (13, 15, 5, 7)
+1--- (8, 9, 10, 11, 12, 13, 14, 15)
+
+NO ESENCIALES: []
+
+\end{verbatim}
+
+\newpage
+
+\subsection*{Interpretando los resultados}
+\label{sec:org02e39f3}
+Ahora tenemos que extraer una expresión booleana de la salida del programa,
+debemos tener en cuenta que nuestras variables tienen mas valor dependiendo 
+su posicion. En la forma de \hyperref[orga6e9a70]{sumatoria} 'w' es el bit más significativo porque 
+esta primero y 'z' es el bit menos significativo, representa el uno. Cada bit
+tiene un valor que representa el estado de la variable ('1', '0' ó '-'), '1' 
+es activo, '0' es negado  y '-' es que no forma parte del mintermino.
+
+\begin{verbatim}
+
+ESENCIALES:              Los minterminos esenciales
+-0-0 (0, 8, 2, 10)                 
+--1- (2, 3, 6, 7, 10, 11, 14, 15)
+-1-1 (13, 15, 5, 7)
+1--- (8, 9, 10, 11, 12, 13, 14, 15)
+
+NO ESENCIALES: []        Si no hay términos faltantes significa
+                         que solo existe una solución para nuestras
+                         especificaciones
+
+\end{verbatim}
+
+Ahora como todos los mintermino son esenciales, lo cual significa que es 
+imposible omitirlos para obtener nuestra funcion, los unimos para crear la 
+función y obtenemos:
+
+\begin{center}
+\begin{tabular}{llllll}
+w & x & y & z &  & Representación\\
+\hline
+- & 0 & - & 0 &  & \(\bar x \bar z\)\\
+- & - & 1 & - &  & \(y\)\\
+- & 1 & - & 1 &  & \(xz\)\\
+1 & - & - & - &  & \(w\)\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{equation}
+A(w,x,y,z) = xz + \bar x \bar z + y + w
+\end{equation}
+
+Esta es la forma de suma mas simplificada de la funcion, si usamos un poco de 
+álgebra booleana podemos reducir un poco más la funcion añadiendo una compuerta
+'xnor':
+
+\begin{equation}
+A(w,x,y,z) = x \(\odot\) z + y + w
+\end{equation}
+\section{Variable B}
+\label{sec:orgd0bb2bd}
+\subsection*{Activaciones}
+\label{sec:orgde64057}
+\begin{center}
+\begin{tabular}{|ccccccccccccccccc|}
+\hline
+ID & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+\hline
+ & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 1 & 1 & 1 & x & x & x & x & x & x\\
+\hline
+\end{tabular}
+\end{center}
+\begin{equation}
+B(w,x,y,z) = \(\sum\) m(0,1,2,3,4,7,8,9) + \(\sum\) d(10,11,12,13,14,15)
+\end{equation}
+
+\subsection*{Entradas}
+\label{sec:orgae988ba}
+\begin{verbatim}
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+0,1,2,3,4,7,8,9
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-0-- (0, 1, 2, 3, 8, 9, 10, 11)
+--00 (0, 8, 4, 12)
+--11 (11, 3, 15, 7)
+
+NO ESENCIALES: []                    
+1--- (8, 9, 10, 11, 12, 13, 14, 15)  Hay términos no esenciales 
+                                     pero no hay términos 
+                                     faltantes así que se ignora
+\end{verbatim}
+
+\section{Variable C}
+\label{sec:org7afeeb1}
+\subsection*{Activaciones}
+\label{sec:org03d52f7}
+\begin{center}
+\begin{tabular}{|ccccccccccccccccc|}
+\hline
+ID & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+\hline
+ & 1 & 1 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & x & x & x & x & x & x\\
+\hline
+\end{tabular}
+\end{center}
+\begin{equation}
+C(w,x,y,z) = \(\sum\) m(0,1,3,4,5,6,7,8,9) + \(\sum\) d(10,11,12,13,14,15)
+\end{equation}
+
+\subsection*{Entradas}
+\label{sec:org4b863c4}
+\begin{verbatim}
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+0,1,3,4,5,6,7,8,9
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+[0, 1, 3, 4, 5, 6, 7, 8, 9]
+[10, 11, 12, 13, 14, 15]
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+--0- (0, 1, 4, 5, 8, 9, 12, 13)
+---1 (1, 3, 5, 7, 9, 11, 13, 15)
+-1-- (4, 5, 6, 7, 12, 13, 14, 15)
+
+NO ESENCIALES: []
+1--- (8, 9, 10, 11, 12, 13, 14, 15)
+\end{verbatim}
+\section{Variable D}
+\label{sec:org1357122}
+\subsection*{Activaciones}
+\label{sec:org29f051e}
+\begin{center}
+\begin{tabular}{|ccccccccccccccccc|}
+\hline
+ID & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+\hline
+ & 1 & 0 & 1 & 1 & 0 & 1 & 1 & 0 & 1 & 0 & x & x & x & x & x & x\\
+\hline
+\end{tabular}
+\end{center}
+\begin{equation}
+D(w,x,y,z) = \(\sum\) m(0,2,3,5,6,8) + \(\sum\) d(10,11,12,13,14,15)
+\end{equation}
+
+\subsection*{Entradas}
+\label{sec:org11e9501}
+\begin{verbatim}
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+0,2,3,5,6,8
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-0-0 (0, 8, 2, 10)
+-01- (10, 11, 2, 3)
+-101 (13, 5)
+--10 (2, 10, 6, 14)
+
+NO ESENCIALES: []
+1--0 (8, 10, 12, 14)
+1-1- (10, 11, 14, 15)
+11-- (12, 13, 14, 15)
+\end{verbatim}
+
+\section{Variable E}
+\label{sec:org1b4d3c0}
+\subsection*{Activaciones}
+\label{sec:org8e9078b}
+\begin{center}
+\begin{tabular}{|ccccccccccccccccc|}
+\hline
+ID & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+\hline
+ & 1 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 1 & 0 & x & x & x & x & x & x\\
+\hline
+\end{tabular}
+\end{center}
+\begin{equation}
+E(w,x,y,z) = \(\sum\) m(0,2,6,8) + \(\sum\) d(10,11,12,13,14,15)
+\end{equation}
+
+\subsection*{Entradas}
+\label{sec:org24b0af6}
+\begin{verbatim}
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4      
+ACTIVACION?
+0,2,6,8
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+[0, 8, 2, 6]
+[10, 11, 12, 13, 14, 15]
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-0-0 (0, 8, 2, 10)
+--10 (2, 10, 6, 14)
+
+NO ESENCIALES: []
+1--0 (8, 10, 12, 14)
+1-1- (10, 11, 14, 15)
+11-- (12, 13, 14, 15)
+\end{verbatim}
+
+\section{Variable F}
+\label{sec:orgd672bc5}
+\subsection*{Activaciones}
+\label{sec:org23fe14e}
+\begin{center}
+\begin{tabular}{|ccccccccccccccccc|}
+\hline
+ID & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+\hline
+ & 1 & 0 & 0 & 0 & 1 & 1 & 1 & 0 & 1 & 1 & x & x & x & x & x & x\\
+\hline
+\end{tabular}
+\end{center}
+\begin{equation}
+F(w,x,y,z) = \(\sum\) m(0,4,5,6,6,9) + \(\sum\) d(10,11,12,13,14,15)
+\end{equation}
+
+\subsection*{Entradas}
+\label{sec:org20eb8ad}
+\begin{verbatim}
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+0,4,5,6,6,9
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+[0, 4, 5, 6, 9]
+[10, 11, 12, 13, 14, 15]
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+0-00 (0, 4)
+-10- (12, 13, 4, 5)
+-1-0 (4, 12, 6, 14)
+1--1 (9, 11, 13, 15)
+
+NO ESENCIALES: []
+1-1- (10, 11, 14, 15)
+11-- (12, 13, 14, 15)
+\end{verbatim}
+
+\section{Variable G}
+\label{sec:org7b783ff}
+\subsection*{Activaciones}
+\label{sec:org01bde96}
+\begin{center}
+\begin{tabular}{|ccccccccccccccccc|}
+\hline
+ID & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+\hline
+ & 0 & 0 & 1 & 1 & 0 & 1 & 1 & 0 & 1 & 1 & x & x & x & x & x & x\\
+\hline
+\end{tabular}
+\end{center}
+\begin{equation}
+G(w,x,y,z) = \(\sum\) m(2,3,5,6,8,9) + \(\sum\) d(10,11,12,13,14,15)
+\end{equation}
+
+\subsection*{Entradas}
+\label{sec:orgd815a60}
+\begin{verbatim}
+---------------------
+      REDUCCION      
+  DE FUNCION LOGICA  
+---------------------
+
+1.LISTA // 2.TABLA?
+1
+NUMERO DE VARIABLES?
+4
+ACTIVACION?
+2,3,5,6,8,9
+REDUNDANCIAS?
+10,11,12,13,14,15
+
+[2, 3, 5, 6, 8, 9]
+[10, 11, 12, 13, 14, 15]
+
+---------------------
+      RESULTADO      
+---------------------
+
+ESENCIALES:
+-01- (10, 11, 2, 3)
+-101 (13, 5)
+--10 (2, 10, 6, 14)
+1--- (8, 9, 10, 11, 12, 13, 14, 15)
+
+NO ESENCIALES: []
+\end{verbatim}
+
+\newpage
+
+\section{Resultados}
+\label{sec:org44d47ec}
+
+
+
+\begin{equation}
+  \begin{aligned}
+    A &: ~ xz + \bar x \bar z + y + w \\
+    B &: ~ \bar y \bar z + yz + \bar x \\
+    C &: ~ \bar y + z + x \\
+    D &: ~ x \bar y z + \bar x y + y \bar z + \bar x  \bar z \\
+    E &: ~ \bar x \bar z + y \bar z \\
+    F &: ~ \bar w \bar y \bar z + x \bar y + x \bar z + wz \\
+    G &: ~ \bar x y + x \bar y z + y \bar z + w
+  \end{aligned}
+\end{equation}
+\end{document}
